@@ -14,6 +14,11 @@ var auth = firebase.auth();
 var justSigned = false;
 var displayName;
 
+var thisButtonArea;
+var thisRpsClass;
+var thisLoginBtn;
+var thisNamePlace;
+var thisLeaveName;
 //   Btns that control showing the correct login pages and their functions
 $(".loginGame").on("click", function () {
     $(".login").fadeIn();
@@ -21,6 +26,11 @@ $(".loginGame").on("click", function () {
     console.log($(this).attr("data-rpsClass"));
     console.log($(this).attr("data-butArea"));
     $("body").css({ "background-color": "#333" });
+    thisButtonArea = $(this).attr("data-butArea");
+    thisRpsClass = $(this).attr("data-rpsClass");
+    thisLoginBtn = $(this).attr("id");
+    thisNamePlace = $(this).attr("data-namePlace");
+    thisLeaveName = $(this).attr("data-leaveName");
 });
 
 $(".backBtn").on("click", function () {
@@ -77,6 +87,7 @@ $(".loginBtn").on("click", function () {
 // Logout Btns
 $(".logoutBtn").on("click", function(){
     firebase.auth().signOut();
+    turnOffGame();
 })
 
 firebase.auth().onAuthStateChanged(function(user){
@@ -86,10 +97,41 @@ firebase.auth().onAuthStateChanged(function(user){
             displayName: displayName,
         });
         console.log(user);
+        turnOnGame()
     } else if (user && !justSigned) {
+        displayName = user.displayName;
         console.log("logged in again");
         console.log(user);
+        turnOnGame();
     } else {
         console.log("not logged in");
     }
-})
+});
+
+function turnOnGame() {
+    $("#"+thisButtonArea).css({"display":"flex"});
+    $("#"+thisLoginBtn).hide();
+    $("."+thisNamePlace).text(displayName);
+}
+
+function turnOffGame(){
+    $("#"+thisButtonArea).css({"display":"none"});
+    $("#"+thisLoginBtn).show();
+    $("."+thisNamePlace).text(thisLeaveName);
+}
+
+// Set perisistance to none
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+  .then(function() {
+    // Existing and future Auth states are now persisted in the current
+    // session only. Closing the window would clear any existing state even
+    // if a user forgets to sign out.
+    // ...
+    // New sign-in will be persisted with session persistence.
+    return firebase.auth().signInWithEmailAndPassword(email, password);
+  })
+  .catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+  });
