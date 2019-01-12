@@ -14,11 +14,20 @@ var auth = firebase.auth();
 var justSigned = false;
 var displayName;
 
+var thisPlayer;
 var thisButtonArea;
 var thisRpsClass;
 var thisLoginBtn;
 var thisNamePlace;
 var thisLeaveName;
+var thisOtherLogArea;
+
+
+var player1;
+var player2;
+
+var play1Pick;
+var play2Pick;
 //   Btns that control showing the correct login pages and their functions
 $(".loginGame").on("click", function () {
     $(".login").fadeIn();
@@ -31,6 +40,8 @@ $(".loginGame").on("click", function () {
     thisLoginBtn = $(this).attr("id");
     thisNamePlace = $(this).attr("data-namePlace");
     thisLeaveName = $(this).attr("data-leaveName");
+    thisOtherLogArea = $(this).attr("data-otherLogArea");
+    thisPlayer = $(this).attr("data-player");
 });
 
 $(".backBtn").on("click", function () {
@@ -107,17 +118,21 @@ firebase.auth().onAuthStateChanged(function(user){
         console.log("not logged in");
     }
 });
+// ---------------------------------Turn on Game function-------------------------
 
 function turnOnGame() {
     $("#"+thisButtonArea).css({"display":"flex"});
-    $("#"+thisLoginBtn).hide();
-    $("."+thisNamePlace).text(displayName);
+    changeName(thisPlayer, displayName);
+    $("#"+thisOtherLogArea).hide();
+    $("."+thisRpsClass).on("click", setPicks)
+    gameArray = [];
 }
 
 function turnOffGame(){
     $("#"+thisButtonArea).css({"display":"none"});
-    $("#"+thisLoginBtn).show();
-    $("."+thisNamePlace).text(thisLeaveName);
+    removeName(thisPlayer);
+    $("#"+thisOtherLogArea).show();
+
 }
 
 // Set perisistance to none
@@ -135,3 +150,108 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
     var errorCode = error.code;
     var errorMessage = error.message;
   });
+
+  var gameState = firebase.database().ref("/gameState");
+
+  gameState.on("value", function(snapshot){
+      if (snapshot.val()===null){
+          setGameState();
+      } else {
+        console.log(snapshot.val());
+        player1 = snapshot.val().player1;
+        player2 = snapshot.val().player2;
+        $(".player1Name").text(snapshot.val().player1);
+        $(".player2Name").text(snapshot.val().player2);
+
+        if (player1 === "Player 1") {
+            $("#loginGame1").show();
+            $("#logout1").hide()
+        } else {
+            $("#loginGame1").hide();
+            $("#logout1").show();
+        };
+
+        if (player2 === "Player 2") {
+            $("#loginGame2").show();
+            $("#logout2").hide()
+        } else {
+            $("#loginGame2").hide();
+            $("#logout2").show();
+        };
+      }
+      
+  })
+
+  function setGameState(){
+      gameState.set({
+          player1: "Player 1",
+          player2: "Player 2"
+      });
+
+      gameArray = [];
+  }
+
+
+
+  function changeName(thisPlayer, displayName) {
+      firebase.database().ref("/gameState/"+thisPlayer).set(displayName);
+  }
+
+  function removeName(thisPlayer){
+      firebase.database().ref("/gameState/"+thisPlayer).set(thisLeaveName);
+  }
+
+
+//   -------------------Game Play-------------------------------------
+
+function setPicks(){
+    var whichPick = $(this).text();
+    console.log(whichPick);
+    $("."+ thisRpsClass).off("click", setPicks);
+    var movePick = firebase.database().ref("/gamePlay").push();
+
+    $("#"+thisButtonArea).hide();
+
+    movePick.set({
+        player: thisPlayer,
+        pick: whichPick
+    })
+}
+
+var gameArray = [];
+
+firebase.database().ref("/gamePlay").on("child_added", function(snapshot){
+    var pick = snapshot.val().pick;
+    var player = snapshot.val().player;
+    gameArray.push(player);
+
+    if (player === "player1") {
+        play1Pick = pick;
+    } else {
+        play2Pick = pick;
+    }
+
+    if (gameArray.length >=2) {
+        round();
+        gameArray = [];
+        firebase.database().ref("/gamePlay").remove();
+    }
+})
+
+function round() {
+    console.log("player1 picked " + play1Pick);
+    console.log("player2 picked " + play2Pick);
+    if (play1Pick === play2Pick) {
+        console.log("Tie")
+    } else if (play1Pick === "Rock" && play2Pick === "Scissors" || play1Pick === "Scissors" && play2Pick === "Paper" || play1Pick === "Paper" && play2Pick === "Rock") {
+        console.log("Player 1 Won")
+    } else {
+        console.log("Player 2 Won")
+    }
+    setTimeout(reset, 500)
+}
+
+function reset(){
+    $("#"+thisButtonArea).css({"display":"flex"});
+    $("."+thisRpsClass).on("click", setPicks);
+}
