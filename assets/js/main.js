@@ -101,6 +101,8 @@ $(".logoutBtn").on("click", function(){
     turnOffGame();
 })
 
+var connected = firebase.database().ref("/connected");
+
 firebase.auth().onAuthStateChanged(function(user){
     if (user && justSigned) {
         justSigned = false;
@@ -108,11 +110,19 @@ firebase.auth().onAuthStateChanged(function(user){
             displayName: displayName,
         });
         console.log(user);
+        connected.push();
+        connected.set({
+            player: user.displayName,
+        });
         turnOnGame()
     } else if (user && !justSigned) {
         displayName = user.displayName;
         console.log("logged in again");
         console.log(user);
+        connected.push();
+        connected.set({
+            player: user.displayName,
+        });
         turnOnGame();
     } else {
         console.log("not logged in");
@@ -189,6 +199,8 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
       });
 
       gameArray = [];
+
+      firebase.database().ref("/gamePlay").remove();
   }
 
 
@@ -200,6 +212,13 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
   function removeName(thisPlayer){
       firebase.database().ref("/gameState/"+thisPlayer).set(thisLeaveName);
   }
+
+//   --------------------On Disconnect -----------------------------
+
+connected.onDisconnect().set(false);
+
+
+
 
 
 //   -------------------Game Play-------------------------------------
