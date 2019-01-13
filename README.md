@@ -1,5 +1,15 @@
 # RPS-Multiplayer
 
+### Version 2.00
+
+- Outputs result of game to page
+- Resets game after each round
+- Can only play game if logged in
+
+### Issues
+- OnDisconnect it a mystery to me
+- If closes browser before logout, ruins game
+
 ### Version 1.50
 
 - Authentication is borderline complete, need to work on .onDisconnect

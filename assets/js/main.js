@@ -28,6 +28,12 @@ var player2;
 
 var play1Pick;
 var play2Pick;
+
+var p1Wins = 0;
+var p1Losses = 0;
+var p2Wins = 0;
+var p2Losses = 0;
+
 //   Btns that control showing the correct login pages and their functions
 $(".loginGame").on("click", function () {
     $(".login").fadeIn();
@@ -96,34 +102,27 @@ $(".loginBtn").on("click", function () {
 });
 
 // Logout Btns
-$(".logoutBtn").on("click", function(){
+$(".logoutBtn").on("click", function () {
     firebase.auth().signOut();
     turnOffGame();
 })
 
-var connected = firebase.database().ref("/connected");
 
-firebase.auth().onAuthStateChanged(function(user){
+firebase.auth().onAuthStateChanged(function (user) {
     if (user && justSigned) {
         justSigned = false;
         user.updateProfile({
             displayName: displayName,
         });
         console.log(user);
-        connected.push();
-        connected.set({
-            player: user.displayName,
-        });
-        turnOnGame()
+        turnOnGame();
+
     } else if (user && !justSigned) {
         displayName = user.displayName;
         console.log("logged in again");
         console.log(user);
-        connected.push();
-        connected.set({
-            player: user.displayName,
-        });
         turnOnGame();
+
     } else {
         console.log("not logged in");
     }
@@ -131,42 +130,42 @@ firebase.auth().onAuthStateChanged(function(user){
 // ---------------------------------Turn on Game function-------------------------
 
 function turnOnGame() {
-    $("#"+thisButtonArea).css({"display":"flex"});
+    $("#" + thisButtonArea).css({ "display": "flex" });
     changeName(thisPlayer, displayName);
-    $("#"+thisOtherLogArea).hide();
-    $("."+thisRpsClass).on("click", setPicks)
+    $("#" + thisOtherLogArea).hide();
+    $("." + thisRpsClass).on("click", setPicks)
     gameArray = [];
 }
 
-function turnOffGame(){
-    $("#"+thisButtonArea).css({"display":"none"});
+function turnOffGame() {
+    $("#" + thisButtonArea).css({ "display": "none" });
     removeName(thisPlayer);
-    $("#"+thisOtherLogArea).show();
+    $("#" + thisOtherLogArea).show();
 
 }
 
 // Set perisistance to none
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
-  .then(function() {
-    // Existing and future Auth states are now persisted in the current
-    // session only. Closing the window would clear any existing state even
-    // if a user forgets to sign out.
-    // ...
-    // New sign-in will be persisted with session persistence.
-    return firebase.auth().signInWithEmailAndPassword(email, password);
-  })
-  .catch(function(error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-  });
+    .then(function () {
+        // Existing and future Auth states are now persisted in the current
+        // session only. Closing the window would clear any existing state even
+        // if a user forgets to sign out.
+        // ...
+        // New sign-in will be persisted with session persistence.
+        return firebase.auth().signInWithEmailAndPassword(email, password);
+    })
+    .catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+    });
 
-  var gameState = firebase.database().ref("/gameState");
+var gameState = firebase.database().ref("/gameState");
 
-  gameState.on("value", function(snapshot){
-      if (snapshot.val()===null){
-          setGameState();
-      } else {
+gameState.on("value", function (snapshot) {
+    if (snapshot.val() === null) {
+        setGameState();
+    } else {
         console.log(snapshot.val());
         player1 = snapshot.val().player1;
         player2 = snapshot.val().player2;
@@ -188,48 +187,47 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
             $("#loginGame2").hide();
             $("#logout2").show();
         };
-      }
-      
-  })
+    }
 
-  function setGameState(){
-      gameState.set({
-          player1: "Player 1",
-          player2: "Player 2"
-      });
+})
 
-      gameArray = [];
+function setGameState() {
+    gameState.set({
+        player1: "Player 1",
+        player2: "Player 2"
+    });
 
-      firebase.database().ref("/gamePlay").remove();
-  }
+    gameArray = [];
+
+    firebase.database().ref("/gamePlay").remove();
+}
 
 
 
-  function changeName(thisPlayer, displayName) {
-      firebase.database().ref("/gameState/"+thisPlayer).set(displayName);
-  }
+function changeName(thisPlayer, displayName) {
+    firebase.database().ref("/gameState/" + thisPlayer).set(displayName);
+}
 
-  function removeName(thisPlayer){
-      firebase.database().ref("/gameState/"+thisPlayer).set(thisLeaveName);
-  }
+function removeName(thisPlayer) {
+    firebase.database().ref("/gameState/" + thisPlayer).set(thisLeaveName);
+}
 
 //   --------------------On Disconnect -----------------------------
 
-connected.onDisconnect().set(false);
-
+// I do not know how to implement this
 
 
 
 
 //   -------------------Game Play-------------------------------------
 
-function setPicks(){
+function setPicks() {
     var whichPick = $(this).text();
     console.log(whichPick);
-    $("."+ thisRpsClass).off("click", setPicks);
+    $("." + thisRpsClass).off("click", setPicks);
     var movePick = firebase.database().ref("/gamePlay").push();
 
-    $("#"+thisButtonArea).hide();
+    $("#" + thisButtonArea).hide();
 
     movePick.set({
         player: thisPlayer,
@@ -239,7 +237,7 @@ function setPicks(){
 
 var gameArray = [];
 
-firebase.database().ref("/gamePlay").on("child_added", function(snapshot){
+firebase.database().ref("/gamePlay").on("child_added", function (snapshot) {
     var pick = snapshot.val().pick;
     var player = snapshot.val().player;
     gameArray.push(player);
@@ -250,7 +248,7 @@ firebase.database().ref("/gamePlay").on("child_added", function(snapshot){
         play2Pick = pick;
     }
 
-    if (gameArray.length >=2) {
+    if (gameArray.length >= 2) {
         round();
         gameArray = [];
         firebase.database().ref("/gamePlay").remove();
@@ -258,19 +256,60 @@ firebase.database().ref("/gamePlay").on("child_added", function(snapshot){
 })
 
 function round() {
+    $(".play1Pick").text(play1Pick);
+    $(".play2Pick").text(play2Pick);
     console.log("player1 picked " + play1Pick);
     console.log("player2 picked " + play2Pick);
     if (play1Pick === play2Pick) {
-        console.log("Tie")
+        console.log("Tie");
+        $(".win").hide();
+        $(".tie").show();
+        showResult();
     } else if (play1Pick === "Rock" && play2Pick === "Scissors" || play1Pick === "Scissors" && play2Pick === "Paper" || play1Pick === "Paper" && play2Pick === "Rock") {
-        console.log("Player 1 Won")
+        console.log("Player 1 Won");
+        $(".winnerName").text(player1);
+        p1Wins++;
+        p2Losses++;
+        showResult();
+
     } else {
-        console.log("Player 2 Won")
+        console.log("Player 2 Won");
+        $(".winnerName").text(player2);
+        p2Wins++;
+        p1Losses++;
+        showResult();
     }
-    setTimeout(reset, 500)
 }
 
-function reset(){
-    $("#"+thisButtonArea).css({"display":"flex"});
-    $("."+thisRpsClass).on("click", setPicks);
+function reset() {
+    $("#" + thisButtonArea).css({ "display": "flex" });
+    $("." + thisRpsClass).on("click", setPicks);
+    $(".win").show();
+    $(".tie").hide();
+}
+
+function showResult() {
+    updateScores();
+    $(".roller").slideDown();
+    setTimeout(function () {
+        $(".roller").slideUp()
+        reset();
+    }, 2000);
+}
+
+function updateScores() {
+    $(".winsP1").text(p1Wins);
+    $(".lossesP1").text(p1Losses);
+    $(".winsP2").text(p2Wins);
+    $(".lossesP2").text(p2Losses);
+}
+
+// ---------------------------------End of Game--------------------------------
+
+// ---------------------------------In Game Chat-------------------------------
+
+var chat = firebase.database().ref("/chat");
+
+function addToChat() {
+    var message = $(".chatInput").val().trim();
 }
