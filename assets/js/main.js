@@ -135,12 +135,14 @@ function turnOnGame() {
     $("#" + thisOtherLogArea).hide();
     $("." + thisRpsClass).on("click", setPicks)
     gameArray = [];
+    $(".chatSubBtn").on("click", makeMessage);
 }
 
 function turnOffGame() {
     $("#" + thisButtonArea).css({ "display": "none" });
     removeName(thisPlayer);
     $("#" + thisOtherLogArea).show();
+    $("#chatSubBtn").off("click", makeMessage);
 
 }
 
@@ -200,6 +202,7 @@ function setGameState() {
     gameArray = [];
 
     firebase.database().ref("/gamePlay").remove();
+    firebase.database().ref("/chat").remove();
 }
 
 
@@ -308,8 +311,39 @@ function updateScores() {
 
 // ---------------------------------In Game Chat-------------------------------
 
-var chat = firebase.database().ref("/chat");
+var chatData = firebase.database().ref("/chat");
 
-function addToChat() {
-    var message = $(".chatInput").val().trim();
+// function addToChat(user, message) {
+
+//     var chat = chatData.push();
+//     chat.set({
+//         user: user,
+//         message: message,
+//     })
+// };
+
+chatData.on("child_added", function(snapshot){
+    var user = snapshot.val().user;
+    var message = snapshot.val().message;
+    var block = $("<h4>").text(user + ": " + message);
+    $(".chatBox").append(block);
+});
+
+// $(".chatSubBtn").on("click", function(){
+//     var message = $("#chatInput").val().trim();
+//     var user = displayName;
+//     addToChat(user, message);
+// });
+
+function makeMessage(){
+    var message = $("#chatInput").val().trim();
+    var user = displayName;
+
+    var chat = chatData.push();
+    chat.set({
+        user: user,
+        message: message
+    })
+
+    $("#chatInput").val("");
 }
