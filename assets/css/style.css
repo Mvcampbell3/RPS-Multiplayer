@@ -1,60 +1,164 @@
+body{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    background: linear-gradient(90deg, black, rgb(0, 70, 94), black);
+    font-family: "Coiny", cursive;
+}
+
+.mainTitle{
+    color: deepskyblue;
+    text-align: center;
+    padding: 10px 0;
+}
+
+h1, h2, h3, h4, h5, h6, p{
+    padding: 0;
+    margin: 0
+}
+
+.game{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.btn{
+    width: fit-content;
+    color: black;
+    margin-top: 10px;
+    padding: 8px 16px;
+    outline: none;
+    border: 2px deepskyblue solid;
+    background-color: white;
+    border-radius: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all, .1s;
+}
+
+.btn:active{
+    font-size: 14px;
+    background-color: blue;
+    color: white;
+    transition: all, .1s;
+}
+
+.playerCard{
+    border: 3px #444 solid;
+    box-shadow: 3px 3px 10px black;
+    outline: 1px deepskyblue solid;
+    height: 294px;
+    background-color: #111;
+    color: deepskyblue;
+}
+
 .playerBox{
-    height: 175px;
+    height: 150px;
     width: 225px;
-    background-color: red;
+    background-color: #111;
     margin: auto;
 }
 
 .playerInfo{
     width: 225px;
-    background-color: #ccc;
     margin: auto;
+    text-align: center;
 }
 
 .gameArea{
     background-color: #ccc;
+    width: 300px;
+    height: 300px;
+    outline: 1px deepskyblue solid;
+    text-align: center;
+    margin: 0 5px;
 }
 
 .buttonArea{
-    display:flex;
-    height: 125px;
-    flex-direction: column;
-    justify-content: space-between;
     display: none;
 }
 
+.rps{
+    display: block;
+    width: 101px;
+    margin: 0 auto 3px auto;
+}
+
 .loginArea{
+    height: 48px;
     width: 225px;
-    margin: 5px auto;
-    justify-content: space-between;
+    position: relative;
+    padding-top: 3px;
+}
+
+.logBtn{
+    display: block;
+    width: fit-content;
+    /* padding-top:  */
+    margin: auto;
 }
 
 .chatBox{
-    width: 100%;
+    width: 600px;
     height: 200px;
+    border: 3px black solid;
+    margin: 0 auto 3px auto;
     overflow-y: scroll;
     background-color: #ccc;
+    outline: 1px deepskyblue solid;
 }
 
 #chatInput{
-    width: 100%;
-    margin-bottom: 3px;
+    display: block;
+    width: 600px;
+    margin: 0 auto 3px auto;
+    font-size: 20px;
+    padding: 3px 0;
+    border: 1px black solid;
+    outline: 1px deepskyblue solid;
+    font-family: "Coiny", cursive;
+}
+
+.chatSubBtn{
+    display: block;
+    margin: auto;
+}
+
+/* --------------------------Login Area------------------- */
+
+.wrapper{
+    width: 500px;
+    margin: 30px auto;
 }
 
 .login{
-    background-color: green;
+    background-color: deepskyblue;
     position: absolute;
     top: 0;
     height: 100vh;
+    width: 100vw;
     display: none;
 }
 
 .signUp{
-    background-color: orange;
+    background-color: deepskyblue;
     position: absolute;
     top: 0;
     height: 100vh;
+    width: 100vw;
     display: none;
+}
+
+.loginInput{
+    width: 95%;
+    margin: auto;
+    font-size: 20px;
+}
+
+.logPageBtn{
+    display: flex;
 }
 
 .logoutBtn{
@@ -67,4 +171,8 @@
 
 .roller{
     display: none;
+}
+
+label{
+    font-size: 24px;
 }

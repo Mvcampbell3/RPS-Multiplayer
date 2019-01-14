@@ -40,7 +40,6 @@ $(".loginGame").on("click", function () {
     console.log($(this).attr("data-player"));
     console.log($(this).attr("data-rpsClass"));
     console.log($(this).attr("data-butArea"));
-    $("body").css({ "background-color": "#333" });
     thisButtonArea = $(this).attr("data-butArea");
     thisRpsClass = $(this).attr("data-rpsClass");
     thisLoginBtn = $(this).attr("id");
@@ -51,18 +50,17 @@ $(".loginGame").on("click", function () {
 });
 
 $(".backBtn").on("click", function () {
-    $("body").css({ "background-color": "#fff" });
     $(".login").fadeOut();
 });
 
 $(".signUpBackBtn").on("click", function () {
-    $(".signUp").fadeOut();
-    $(".login").fadeIn();
+    $(".signUp").hide();
+    $(".login").show();
 });
 
 $(".toSignUpBtn").on("click", function () {
-    $(".login").fadeOut();
-    $(".signUp").fadeIn();
+    $(".login").hide();
+    $(".signUp").show();
 })
 // ------------------------------------------------------------------------
 
@@ -82,7 +80,6 @@ $(".signUpBtn").on("click", function () {
         });
         justSigned = true;
         $(".signUp").fadeOut();
-        $("body").css({ "background-color": "#fff" });
 
     }
 })
@@ -92,13 +89,17 @@ $(".loginBtn").on("click", function () {
     var email = $("#loginEmail").val().trim();
     var password = $("#loginPassword").val().trim();
 
-    var promise = auth.signInWithEmailAndPassword(email, password);
-    promise.catch(function (event) {
-        console.log(event.message);
-    });
+    if (email === "" || password === "") {
+        alert("Must Enter Information In All Fields");
+    } else {
+        var promise = auth.signInWithEmailAndPassword(email, password);
+        promise.catch(function (event) {
+            console.log(event.message);
+        });
 
-    $(".login").fadeOut();
-    $("body").css({ "background-color": "#fff" });
+        $(".login").fadeOut();
+    }
+
 });
 
 // Logout Btns
@@ -130,7 +131,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 // ---------------------------------Turn on Game function-------------------------
 
 function turnOnGame() {
-    $("#" + thisButtonArea).css({ "display": "flex" });
+    $("#" + thisButtonArea).slideDown();
     changeName(thisPlayer, displayName);
     $("#" + thisOtherLogArea).hide();
     $("." + thisRpsClass).on("click", setPicks)
@@ -139,11 +140,18 @@ function turnOnGame() {
 }
 
 function turnOffGame() {
-    $("#" + thisButtonArea).css({ "display": "none" });
+    $("#" + thisButtonArea).slideUp();
     removeName(thisPlayer);
     $("#" + thisOtherLogArea).show();
     $("#chatSubBtn").off("click", makeMessage);
-
+    firebase.database().ref("/gamePlay").remove();
+    // May want to clear chat as well?
+    console.log("should have run remove on /gamePlay");
+    p1Losses = 0;
+    p1Wins = 0;
+    p2Losses = 0;
+    p2Wins = 0;
+    updateScores();
 }
 
 // Set perisistance to none
@@ -217,9 +225,27 @@ function removeName(thisPlayer) {
 
 //   --------------------On Disconnect -----------------------------
 
-// I do not know how to implement this
+// I do not know how to implement this really
 
+firebase.database().ref("/chat").onDisconnect().remove();
+firebase.database().ref("/gamePlay").onDisconnect().remove();
 
+// Always works on player2 whether is player 1 of player 2. not good.
+// Tried switching players, never catched first if statement, always goes else
+// Probably stupid, but pretty sure that if statement is set up right, might use switch
+if (thisPlayer === "player1") {
+    firebase.database().ref("/gameState").onDisconnect().update({
+        player1: "Player 1"
+    });
+} else {
+    firebase.database().ref("/gameState").onDisconnect().update({
+        player2: "Player 2"
+    })
+};
+
+$(".gameArea").on("click", function () {
+    console.log(thisPlayer + " " + typeof thisPlayer);
+})
 
 
 //   -------------------Game Play-------------------------------------
@@ -230,7 +256,7 @@ function setPicks() {
     $("." + thisRpsClass).off("click", setPicks);
     var movePick = firebase.database().ref("/gamePlay").push();
 
-    $("#" + thisButtonArea).hide();
+    $("#" + thisButtonArea).slideUp();
 
     movePick.set({
         player: thisPlayer,
@@ -247,8 +273,11 @@ firebase.database().ref("/gamePlay").on("child_added", function (snapshot) {
 
     if (player === "player1") {
         play1Pick = pick;
+        $(".playerBox1").css({ "background-color": "deepskyblue" });
     } else {
         play2Pick = pick;
+        $(".playerBox2").css({ "background-color": "deepskyblue" });
+
     }
 
     if (gameArray.length >= 2) {
@@ -285,7 +314,8 @@ function round() {
 }
 
 function reset() {
-    $("#" + thisButtonArea).css({ "display": "flex" });
+    $(".playerBox").css({ "background-color": "#111" });
+    $("#" + thisButtonArea).slideDown();
     $("." + thisRpsClass).on("click", setPicks);
     $(".win").show();
     $(".tie").hide();
@@ -313,29 +343,14 @@ function updateScores() {
 
 var chatData = firebase.database().ref("/chat");
 
-// function addToChat(user, message) {
-
-//     var chat = chatData.push();
-//     chat.set({
-//         user: user,
-//         message: message,
-//     })
-// };
-
-chatData.on("child_added", function(snapshot){
+chatData.on("child_added", function (snapshot) {
     var user = snapshot.val().user;
     var message = snapshot.val().message;
     var block = $("<h4>").text(user + ": " + message);
-    $(".chatBox").append(block);
+    $(".chatBox").prepend(block);
 });
 
-// $(".chatSubBtn").on("click", function(){
-//     var message = $("#chatInput").val().trim();
-//     var user = displayName;
-//     addToChat(user, message);
-// });
-
-function makeMessage(){
+function makeMessage() {
     var message = $("#chatInput").val().trim();
     var user = displayName;
 

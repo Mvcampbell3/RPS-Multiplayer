@@ -6,210 +6,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Rock, Paper, Scissors</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-        crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Coiny" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
     <header>
-        <h1 class="mainTitle text-center">Rock Paper Scissors</h1>
+        <h1 class="mainTitle">Rock Paper Scissors</h1>
     </header>
+    <div class="game">
+        <div class="player1Area playerArea">
+            <div class="playerCard">
+                <div class="playerInfo">
+                    <h2 class="playerName player1Name" id="player1Name">Player 1</h2>
+                    <h4 class="wins">Wins: <span class="winsP1">0</span></h4>
+                    <h4 class="losses">Losses: <span class="lossesP1">0</span></h4>
+                </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 col-sm-12 player1Area playerArea">
-                <div class="playerCard">
-                    <div class="playerInfo">
-                        <div class="row">
-                            <h2 class="col-12 playerName player1Name text-center" id="player1Name">Player 1</h2>
-                        </div>
-                        <div class="row">
-                            <h4 class="wins col-12 text-center">Wins: <span class="winsP1">0</span></h4>
-                        </div>
-                        <div class="row">
-                            <h4 class="losses col-12 text-center">Losses: <span class="lossesP1">0</span></h4>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="playerBox">
-                                <div class="buttonArea" id="buttonArea1">
-                                    <button class="btn btn-info rpsBtn1">Rock</button>
-                                    <button class="btn btn-info rpsBtn1">Paper</button>
-                                    <button class="btn btn-info rpsBtn1">Scissors</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div id="loginArea1" class="loginArea">
-                                <button id="loginGame1" class="btn btn-secondary loginGame" data-player="player1"
-                                    data-butArea="buttonArea1" data-namePlace="player1Name" data-rpsClass="rpsBtn1" data-leaveName="Player 1" data-otherLogArea ="loginArea2">Login</button>
-                                <button id="logout1" class="btn btn-secondary logoutBtn">Logout</button>
-                            </div> 
-
-                        </div>
+                <div class="playerBox playerBox1">
+                    <div class="buttonArea" id="buttonArea1">
+                        <div class="btn rps rpsBtn1">Rock</div>
+                        <div class="btn rps rpsBtn1">Paper</div>
+                        <div class="btn rps rpsBtn1">Scissors</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 col-sm-12">
-                <div class="gameArea">
-                    <h2 class="gameTitle text-center">Game Area</h2>
-                    <div class="row roller">
-                        <div class="col-12">
-                            <div class="row">
-                                <h3 class="col-12"><span class="player1Name">Player 1</span> Threw: <span class="play1Pick">Rock</span></h3>
-                            </div>
-                            <div class="row">
-                                <h3 class="col-12"><span class="player2Name">Player 2</span> Threw: <span class="play2Pick">Paper</span></h3>
-                            </div>
-                            <div class="row">
-                                <h3 class="col-12 win"><span class="winnerName">This Guy</span> Wins!!</h3>
-                                <h3 class="tie col-12">It was a Tie</h3>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-12 player2Area playerArea">
-                <div class="playerCard">
-                    <div class="playerInfo">
-                        <div class="row">
-                            <h2 class="col-12 playerName player2Name text-center" id="player2Name">Player 2</h2>
-                        </div>
-                        <div class="row">
-                            <h4 class="wins col-12 text-center">Wins: <span class="winsP2">0</span></h4>
-                        </div>
-                        <div class="row">
-                            <h4 class="losses col-12 text-center">Losses: <span class="lossesP2">0</span></h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="playerBox">
-                                <div class="buttonArea" id="buttonArea2">
-                                    <button class="btn btn-info rpsBtn2">Rock</button>
-                                    <button class="btn btn-info rpsBtn2">Paper</button>
-                                    <button class="btn btn-info rpsBtn2">Scissors</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div id="loginArea2" class="loginArea">
-                                <button id="loginGame2" class="btn btn-secondary loginGame" data-player="player2"
-                                    data-butArea="buttonArea2" data-namePlace="player2Name" data-rpsClass="rpsBtn2" data-leaveName="Player 2" data-otherLogArea="loginArea1">Login</button>
-                                <button id="logout2" class="btn btn-secondary logoutBtn">Logout</button>
-                            </div>
-
-                        </div>
-                    </div>
+                <div id="loginArea1" class="loginArea">
+                    <div id="loginGame1" class="btn logBtn loginGame" data-player="player1" data-butArea="buttonArea1"
+                        data-namePlace="player1Name" data-rpsClass="rpsBtn1" data-leaveName="Player 1"
+                        data-otherLogArea="loginArea2">Login</div>
+                    <div id="logout1" class="btn logoutBtn logBtn">Logout</div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-3 empty"></div>
-            <div class="col-6 chat">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="chatBox"></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <input type="text" name="" autocomplete="off" id="chatInput">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn btn-success chatSubBtn">Submit</button>
-                    </div>
-                </div>
 
+        <div class="gameArea">
+            <h2 class="gameTitle">Game Area</h2>
+            <div class="roller">
+                <h3 class=""><span class="player1Name">Player 1</span> Threw: <span class="play1Pick"></span></h3>
+                <h3 class=""><span class="player2Name">Player 2</span> Threw: <span class="play2Pick"></span></h3>
+                <h3 class=" win"><span class="winnerName"></span> Wins!!</h3>
+                <h3 class="tie ">It was a Tie</h3>
             </div>
-            <div class="col-3 empty"></div>
         </div>
 
-
-    </div>
-    <!--End of container-->
-    <div class="container-fluid login">
-        <div class="row">
-            <div class="col-2 empty"></div>
-            <div class="col-8">
-                <div class="row">
-                    <form class="col-12">
-                        <div class="form-group">
-                            <label for="loginEmail">Email address</label>
-                            <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp"
-                                placeholder="Enter email">
-                        </div>
-                        <div class="form-group">
-                            <label for="loginPassword">Password</label>
-                            <input type="text" class="form-control" id="loginPassword" aria-describedby="emailHelp"
-                                placeholder="Enter password">
-                        </div>
-                    </form>
+        <div class="player2Area playerArea">
+            <div class="playerCard">
+                <div class="playerInfo">
+                    <h2 class="col-12 playerName player2Name" id="player2Name">Player 2</h2>
+                    <h4 class="wins col-12">Wins: <span class="winsP2">0</span></h4>
+                    <h4 class="losses col-12">Losses: <span class="lossesP2">0</span></h4>
                 </div>
-                <div class="row">
-                    <div class="col-12 loginBtnArea">
-                        <button class="btn btn-primary loginBtn">Login</button>
-                        <button class="btn btn-info toSignUpBtn">Not A Member?</button>
-                        <button class="btn btn-warning backBtn">Back</button>
+                <div class="playerBox playerBox2">
+                    <div class="buttonArea" id="buttonArea2">
+                        <div class="btn rps rpsBtn2">Rock</div>
+                        <div class="btn rps rpsBtn2">Paper</div>
+                        <div class="btn rps rpsBtn2">Scissors</div>
                     </div>
                 </div>
+                <div id="loginArea2" class="loginArea">
+                    <div id="loginGame2" class="btn logBtn loginGame" data-player="player2" data-butArea="buttonArea2"
+                        data-namePlace="player2Name" data-rpsClass="rpsBtn2" data-leaveName="Player 2"
+                        data-otherLogArea="loginArea1">Login</div>
+                    <div id="logout2" class="btn logBtn logoutBtn">Logout</div>
+                </div>
             </div>
-            <div class="col-2 empty"></div>
+
         </div>
     </div>
-    <div class="container-fluid signUp">
-        <div class="row">
-            <div class="col-2 empty"></div>
-            <div class="col-8">
-                <div class="row">
-                    <form action="" class="col-12">
-                        <div class="form-group">
-                            <label for="signUpEmail">Email Address</label>
-                            <input type="email" class="form-control" id="signUpEmail" aria-describedby="emailHelp"
-                                placeholder="Enter email">
-                        </div>
-                        <div class="form-group">
-                            <label for="signUpDisplayName">Display Name</label>
-                            <input type="text" class="form-control" id="signUpDisplayName" aria-describedby="emailHelp"
-                                placeholder="Enter display name">
-                        </div>
-                        <div class="form-group">
-                            <label for="signUpPassword">Password</label>
-                            <input type="text" class="form-control" id="signUpPassword" aria-describedby="emailHelp"
-                                placeholder="Enter password">
-                        </div>
-                    </form>
-                </div>
-                <div class="row">
-                    <div class="col signUpBtnArea">
-                        <button class="btn btn-primary signUpBtn">Sign Up</button>
-                        <button class="btn btn-warning signUpBackBtn">Back</button>
-                    </div>
-                </div>
+
+
+    <div class="chat">
+        <div class="chatBox"></div>
+        <input type="text" name="" autocomplete="off" id="chatInput">
+        <div class="btn chatSubBtn">Submit</div>
+    </div>
+    <!-- End of Main Screen -->
+    <div class="login">
+        <div class="wrapper">
+            <label for="loginEmail">Email Address</label><br>
+            <input type="email" class="loginInput" id="loginEmail" aria-describedby="emailHelp" placeholder="something@somewhere.com"><br>
+            <label for="loginPassword">Password</label><br>
+            <input type="text" class="loginInput" id="loginPassword" aria-describedby="emailHelp" placeholder="it's a secret"><br>
+            <div class="loginBtnArea logPageBtn">
+                <div class="btn loginBtn">Login</div>
+                <div class="btn toSignUpBtn">Not A Member?</div>
+                <div class="btn backBtn">Back</div>
             </div>
-            <div class="col-2 empty"></div>
         </div>
     </div>
+
+    <div class="signUp">
+        <div class="wrapper">
+            <label for="signUpEmail">Email Address</label><br>
+            <input type="email" class="loginInput" id="signUpEmail" aria-describedby="emailHelp" placeholder="something@somewhere.com"><br>
+            <label for="signUpDisplayName">Display Name</label><br>
+            <input type="text" class="loginInput" id="signUpDisplayName" aria-describedby="emailHelp" placeholder="CoolPerson24"><br>
+            <label for="signUpPassword">Password</label><br>
+            <input type="text" class="loginInput" id="signUpPassword" aria-describedby="emailHelp" placeholder="don't tell anyone"><br>
+            <div class="signUpBtnArea logPageBtn">
+                <div class="btn signUpBtn">Sign Up</div>
+                <div class="btn signUpBackBtn">Back</div>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-database.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 
