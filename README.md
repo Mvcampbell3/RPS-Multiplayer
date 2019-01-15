@@ -1,5 +1,13 @@
 # RPS-Multiplayer
 
+## Version 2.51
+
+### Slight Changes
+
+- Changed how chat message is prepended to page
+- Added alerts to login errors for user
+
+
 ## Version 2.50
 
 ### Added, Fixed:

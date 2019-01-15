@@ -77,6 +77,7 @@ $(".signUpBtn").on("click", function () {
         var promise = auth.createUserWithEmailAndPassword(email, password);
         promise.catch(function (event) {
             console.log(event.message);
+            alert(event.message);
         });
         justSigned = true;
         $(".signUp").fadeOut();
@@ -95,6 +96,7 @@ $(".loginBtn").on("click", function () {
         var promise = auth.signInWithEmailAndPassword(email, password);
         promise.catch(function (event) {
             console.log(event.message);
+            alert(event.message);
         });
 
         $(".login").fadeOut();
@@ -132,7 +134,6 @@ firebase.auth().onAuthStateChanged(function (user) {
 // ---------------------------------Turn on Game function-------------------------
 
 function turnOnGame() {
-    // $("#" + thisButtonArea).slideDown();
     changeName(thisPlayer, displayName);
     $("#" + thisOtherLogArea).hide();
     $("." + thisRpsClass).on("click", setPicks)
@@ -146,10 +147,9 @@ function turnOnGame() {
 function turnOffGame() {
     $("#" + thisButtonArea).slideUp();
     removeName(thisPlayer);
-    // $("#" + thisOtherLogArea).show();
+    $("#" + thisOtherLogArea).show();
     $("#chatSubBtn").off("click", makeMessage);
     firebase.database().ref("/gamePlay").remove();
-    // May want to clear chat as well?
     console.log("should have run remove on /gamePlay");
     updateScores();
 }
@@ -157,21 +157,18 @@ function turnOffGame() {
 // Set perisistance to none
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
     .then(function () {
-        // Existing and future Auth states are now persisted in the current
-        // session only. Closing the window would clear any existing state even
-        // if a user forgets to sign out.
-        // ...
-        // New sign-in will be persisted with session persistence.
         return firebase.auth().signInWithEmailAndPassword(email, password);
     })
     .catch(function (error) {
-        // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
+        console.log(errorCode + " " + errorMessage);
     });
 
 var gameState = firebase.database().ref("/gameState");
+
 // This is where all of pur problems stem from
+// -------------------------------- Problems ---------------------------------//
 // Also need to grab scores from this motherfucker right here
 gameState.on("value", function (snapshot) {
     if (snapshot.val() === null) {
@@ -201,7 +198,6 @@ gameState.on("value", function (snapshot) {
 
         if (player1 !== "Player 1" && player2 !== "Player 2") {
             console.log("would who buttons now");
-            // turnOnGame();
             $("#" + thisButtonArea).slideDown();
         }
     }
@@ -396,21 +392,6 @@ function showResult() {
         }
     })
 
-
-    // if (player1 === displayName) {
-    //     scoreDatabase.set({
-    //         name: displayName,
-    //         wins: p1Wins,
-    //         losses: p1Losses,
-    //     })
-    // } else {
-    //     scoreDatabase.set({
-    //         name: displayName,
-    //         wins: p2Wins,
-    //         losses: p2Losses,
-    //     })
-    // }
-
     updateScores();
     $(".roller").slideDown();
     setTimeout(function () {
@@ -435,7 +416,7 @@ var chatData = firebase.database().ref("/chat");
 chatData.on("child_added", function (snapshot) {
     var user = snapshot.val().user;
     var message = snapshot.val().message;
-    var block = $("<h4>").text(user + ": " + message);
+    var block = $("<div>").html("<h4><span class='underline'>" + user + ":</span> " + message);
     $(".chatBox").prepend(block);
 });
 
