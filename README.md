@@ -1,6 +1,24 @@
 # RPS-Multiplayer
 
-### Version 2.00
+## Version 2.50
+
+### Added, Fixed:
+
+- Ondisconnect now works as expected
+- stores and retrieves score in database
+- pictures for what picked
+- Got rid of bootstrap, added own styling
+
+### To be Added:
+
+- Also load opponents score, if available
+- make a high score/leaders area
+- better rock picture
+- media queries? time contraint
+
+## Version 2.00
+
+### Added:
 
 - Outputs result of game to page
 - Resets game after each round
@@ -10,7 +28,7 @@
 - OnDisconnect it a mystery to me
 - If closes browser before logout, ruins game
 
-### Version 1.50
+## Version 1.50
 
 - Authentication is borderline complete, need to work on .onDisconnect
 - Game runs well

@@ -120,6 +120,7 @@ h1, h2, h3, h4, h5, h6, p{
     border: 1px black solid;
     outline: 1px deepskyblue solid;
     font-family: "Coiny", cursive;
+    text-align: center;
 }
 
 .chatSubBtn{

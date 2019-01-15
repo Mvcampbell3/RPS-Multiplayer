@@ -118,6 +118,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         console.log(user);
         turnOnGame();
 
+
     } else if (user && !justSigned) {
         displayName = user.displayName;
         console.log("logged in again");
@@ -131,26 +132,25 @@ firebase.auth().onAuthStateChanged(function (user) {
 // ---------------------------------Turn on Game function-------------------------
 
 function turnOnGame() {
-    $("#" + thisButtonArea).slideDown();
+    // $("#" + thisButtonArea).slideDown();
     changeName(thisPlayer, displayName);
     $("#" + thisOtherLogArea).hide();
     $("." + thisRpsClass).on("click", setPicks)
     gameArray = [];
     $(".chatSubBtn").on("click", makeMessage);
+    checkDisconnect();
+    getScoreDatabase();
+    
 }
 
 function turnOffGame() {
     $("#" + thisButtonArea).slideUp();
     removeName(thisPlayer);
-    $("#" + thisOtherLogArea).show();
+    // $("#" + thisOtherLogArea).show();
     $("#chatSubBtn").off("click", makeMessage);
     firebase.database().ref("/gamePlay").remove();
     // May want to clear chat as well?
     console.log("should have run remove on /gamePlay");
-    p1Losses = 0;
-    p1Wins = 0;
-    p2Losses = 0;
-    p2Wins = 0;
     updateScores();
 }
 
@@ -171,7 +171,8 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
     });
 
 var gameState = firebase.database().ref("/gameState");
-
+// This is where all of pur problems stem from
+// Also need to grab scores from this motherfucker right here
 gameState.on("value", function (snapshot) {
     if (snapshot.val() === null) {
         setGameState();
@@ -197,6 +198,12 @@ gameState.on("value", function (snapshot) {
             $("#loginGame2").hide();
             $("#logout2").show();
         };
+
+        if (player1 !== "Player 1" && player2 !== "Player 2") {
+            console.log("would who buttons now");
+            // turnOnGame();
+            $("#" + thisButtonArea).slideDown();
+        }
     }
 
 })
@@ -233,15 +240,23 @@ firebase.database().ref("/gamePlay").onDisconnect().remove();
 // Always works on player2 whether is player 1 of player 2. not good.
 // Tried switching players, never caught first if statement, always goes else
 // Probably stupid, but pretty sure that if statement is set up right, might use switch
-if (thisPlayer === "player1") {
-    firebase.database().ref("/gameState").onDisconnect().update({
-        player1: "Player 1"
-    });
-} else {
-    firebase.database().ref("/gameState").onDisconnect().update({
-        player2: "Player 2"
-    })
-};
+
+// Figured it out, thisPlayer is undefined at start, when this function runs, make it a function that runs after
+// thisPlayer is assigned?
+
+// Works Baby!!
+function checkDisconnect() {
+    if (thisPlayer === "player1") {
+        firebase.database().ref("/gameState").onDisconnect().update({
+            player1: "Player 1"
+        });
+    } else {
+        firebase.database().ref("/gameState").onDisconnect().update({
+            player2: "Player 2"
+        })
+    };
+}
+
 
 $(".gameArea").on("click", function () {
     console.log(thisPlayer + " " + typeof thisPlayer);
@@ -290,8 +305,8 @@ firebase.database().ref("/gamePlay").on("child_added", function (snapshot) {
 function round() {
     $(".play1Pick").text(play1Pick);
     $(".play2Pick").text(play2Pick);
-    $(".playerBox1").css({"background":"url(assets/images/"+play1Pick+".jpg"});
-    $(".playerBox2").css({"background":"url(assets/images/"+play2Pick+".jpg"});
+    $(".playerBox1").css({ "background": "url(assets/images/" + play1Pick + ".jpg" });
+    $(".playerBox2").css({ "background": "url(assets/images/" + play2Pick + ".jpg" });
     console.log("player1 picked " + play1Pick);
     console.log("player2 picked " + play2Pick);
     if (play1Pick === play2Pick) {
@@ -323,7 +338,79 @@ function reset() {
     $(".tie").hide();
 }
 
+
+function getScoreDatabase() {
+    var scoreDatabase = firebase.database().ref("/Scores/" + displayName);
+
+    var checkScoreDatabase = scoreDatabase.once("value", function(snap){
+        var test = snap.val();
+
+        if (test !== null) {
+            if (thisPlayer === "player1") {
+                p1Wins = test.wins;
+                p1Losses = test.losses;
+            } else {
+                p2Wins = test.wins;
+                p2Losses = test.losses; 
+            }
+        } else {
+            console.log("no previous score saved")
+        }
+    });
+
+    setTimeout(updateScores, 500);
+}
+
 function showResult() {
+    var scoreDatabase = firebase.database().ref("/Scores/" + displayName);
+
+    var checkScoreDatabase = scoreDatabase.once("value", function (snap) {
+        var test = snap.val()
+
+        if (test === null) {
+            if (player1 === displayName) {
+                scoreDatabase.set({
+                    name: displayName,
+                    wins: p1Wins,
+                    losses: p1Losses,
+                })
+            } else {
+                scoreDatabase.set({
+                    name: displayName,
+                    wins: p2Wins,
+                    losses: p2Losses,
+                })
+            }
+        } else {
+            if (player1 === displayName) {
+                scoreDatabase.update({
+                    wins: p1Wins,
+                    losses: p1Losses,
+                })
+            } else {
+                scoreDatabase.update({
+                    wins: p2Wins,
+                    losses: p2Losses,
+                })
+            }
+        }
+    })
+
+
+    // if (player1 === displayName) {
+    //     scoreDatabase.set({
+    //         name: displayName,
+    //         wins: p1Wins,
+    //         losses: p1Losses,
+    //     })
+    // } else {
+    //     scoreDatabase.set({
+    //         name: displayName,
+    //         wins: p2Wins,
+    //         losses: p2Losses,
+    //     })
+    // }
+
     updateScores();
     $(".roller").slideDown();
     setTimeout(function () {
