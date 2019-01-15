@@ -231,7 +231,7 @@ firebase.database().ref("/chat").onDisconnect().remove();
 firebase.database().ref("/gamePlay").onDisconnect().remove();
 
 // Always works on player2 whether is player 1 of player 2. not good.
-// Tried switching players, never catched first if statement, always goes else
+// Tried switching players, never caught first if statement, always goes else
 // Probably stupid, but pretty sure that if statement is set up right, might use switch
 if (thisPlayer === "player1") {
     firebase.database().ref("/gameState").onDisconnect().update({
@@ -273,10 +273,10 @@ firebase.database().ref("/gamePlay").on("child_added", function (snapshot) {
 
     if (player === "player1") {
         play1Pick = pick;
-        $(".playerBox1").css({ "background-color": "deepskyblue" });
+        $(".playerBox1").css({ "background": "deepskyblue" });
     } else {
         play2Pick = pick;
-        $(".playerBox2").css({ "background-color": "deepskyblue" });
+        $(".playerBox2").css({ "background": "deepskyblue" });
 
     }
 
@@ -290,6 +290,8 @@ firebase.database().ref("/gamePlay").on("child_added", function (snapshot) {
 function round() {
     $(".play1Pick").text(play1Pick);
     $(".play2Pick").text(play2Pick);
+    $(".playerBox1").css({"background":"url(assets/images/"+play1Pick+".jpg"});
+    $(".playerBox2").css({"background":"url(assets/images/"+play2Pick+".jpg"});
     console.log("player1 picked " + play1Pick);
     console.log("player2 picked " + play2Pick);
     if (play1Pick === play2Pick) {
@@ -314,7 +316,7 @@ function round() {
 }
 
 function reset() {
-    $(".playerBox").css({ "background-color": "#111" });
+    $(".playerBox").css({ "background": "#111" });
     $("#" + thisButtonArea).slideDown();
     $("." + thisRpsClass).on("click", setPicks);
     $(".win").show();

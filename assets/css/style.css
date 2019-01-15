@@ -57,8 +57,9 @@ h1, h2, h3, h4, h5, h6, p{
 .playerBox{
     height: 150px;
     width: 225px;
-    background-color: #111;
+    /* background-color: #111; */
     margin: auto;
+    /* background: url(../images/paper.jpg) */
 }
 
 .playerInfo{
