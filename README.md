@@ -1,4 +1,21 @@
-# RPS-Multiplayer
+# Welcome To My Multiplayer Rock Paper Scissors Game!
+
+## What you will be able to do:
+
+- To play the game, you must login at either the player 1 or player 2 side.
+- You can create a new account or log into an existing account
+- Once both you and another player are logged in together, you will be able to select Rock, Paper, or Scissors
+- The game will keep track of your overall score and save it to the database
+
+
+## Version 2.75
+
+### Updates:
+
+- Loads Opponents score on both players signing in
+- hides score when when player logouts/disconnects
+- added picture of iron meterorite as rock picture to mess with people
+- added basic media queries
 
 ## Version 2.51
 
@@ -20,7 +37,6 @@
 ### To be Added:
 
 - Also load opponents score, if available
-- make a high score/leaders area
 - better rock picture
 - media queries? time contraint
 

@@ -57,9 +57,7 @@ h1, h2, h3, h4, h5, h6, p{
 .playerBox{
     height: 150px;
     width: 225px;
-    /* background-color: #111; */
     margin: auto;
-    /* background: url(../images/paper.jpg) */
 }
 
 .playerInfo{
@@ -75,6 +73,10 @@ h1, h2, h3, h4, h5, h6, p{
     outline: 1px deepskyblue solid;
     text-align: center;
     margin: 0 5px;
+}
+
+.stat{
+    display: none;
 }
 
 .buttonArea{
@@ -97,7 +99,6 @@ h1, h2, h3, h4, h5, h6, p{
 .logBtn{
     display: block;
     width: fit-content;
-    /* padding-top:  */
     margin: auto;
 }
 
@@ -181,4 +182,29 @@ h1, h2, h3, h4, h5, h6, p{
 
 label{
     font-size: 24px;
+}
+
+/* ----------------------- Media Queries ----------------------- */
+
+@media (max-width: 900px) {
+    .game{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gameArea{
+        margin: 10px 0;
+    }
+}
+
+@media (max-width: 615px) {
+    .chatBox{
+        width: 95%;
+        margin: 10px auto 3px auto;
+    }
+
+    #chatInput{
+        width: 95%;
+        margin: auto;
+    }
 }

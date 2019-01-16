@@ -10,6 +10,7 @@ var config = {
 firebase.initializeApp(config);
 
 var auth = firebase.auth();
+
 //   Vars that decide which player you are
 var justSigned = false;
 var displayName;
@@ -25,7 +26,6 @@ var thisOtherLogArea;
 
 var player1;
 var player2;
-
 var play1Pick;
 var play2Pick;
 
@@ -33,6 +33,8 @@ var p1Wins = 0;
 var p1Losses = 0;
 var p2Wins = 0;
 var p2Losses = 0;
+
+var thisOpponent;
 
 //   Btns that control showing the correct login pages and their functions
 $(".loginGame").on("click", function () {
@@ -120,7 +122,6 @@ firebase.auth().onAuthStateChanged(function (user) {
         console.log(user);
         turnOnGame();
 
-
     } else if (user && !justSigned) {
         displayName = user.displayName;
         console.log("logged in again");
@@ -138,10 +139,11 @@ function turnOnGame() {
     $("#" + thisOtherLogArea).hide();
     $("." + thisRpsClass).on("click", setPicks)
     gameArray = [];
+    firebase.database().ref("/gamePlay").remove();
     $(".chatSubBtn").on("click", makeMessage);
     checkDisconnect();
     getScoreDatabase();
-    
+
 }
 
 function turnOffGame() {
@@ -151,6 +153,13 @@ function turnOffGame() {
     $("#chatSubBtn").off("click", makeMessage);
     firebase.database().ref("/gamePlay").remove();
     console.log("should have run remove on /gamePlay");
+    if (thisPlayer === "player1") {
+        p1Wins = 0;
+        p1Losses = 0;
+    } else {
+        p2Wins = 0;
+        p2Losses = 0;
+    }
     updateScores();
 }
 
@@ -167,10 +176,9 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
 
 var gameState = firebase.database().ref("/gameState");
 
-// This is where all of pur problems stem from
-// -------------------------------- Problems ---------------------------------//
-// Also need to grab scores from this motherfucker right here
+// Check for when players enter the game and then start game
 gameState.on("value", function (snapshot) {
+    $(".stat").hide();
     if (snapshot.val() === null) {
         setGameState();
     } else {
@@ -199,10 +207,52 @@ gameState.on("value", function (snapshot) {
         if (player1 !== "Player 1" && player2 !== "Player 2") {
             console.log("would who buttons now");
             $("#" + thisButtonArea).slideDown();
+            filterPlayer();
+            $(".stat").fadeIn();
         }
     }
 
 })
+
+function filterPlayer() {
+    if (player1 === displayName) {
+        thisOpponent = {
+            player: "player2",
+            name: player2,
+        };
+    } else {
+        thisOpponent = {
+            player: "player1",
+            name: player1,
+        }
+    }
+    console.log(thisOpponent);
+    showOppoStat();
+
+}
+
+function showOppoStat() {
+    console.log(thisOpponent);
+
+    var scoreDatabase = firebase.database().ref("/Scores/" + thisOpponent.name);
+
+    var getDatabase = scoreDatabase.once("value", function (snap) {
+        if (snap.val() !== null) {
+            if (thisOpponent.player === "player1") {
+                p1Wins = snap.val().wins;
+                p1Losses = snap.val().losses;
+            } else {
+                p2Wins = snap.val().wins;
+                p2Losses = snap.val().losses;
+            }
+        } else {
+            console.log("first game");
+        }
+
+
+    })
+    setTimeout(updateScores, 500);
+}
 
 function setGameState() {
     gameState.set({
@@ -228,19 +278,10 @@ function removeName(thisPlayer) {
 
 //   --------------------On Disconnect -----------------------------
 
-// I do not know how to implement this really
 
 firebase.database().ref("/chat").onDisconnect().remove();
 firebase.database().ref("/gamePlay").onDisconnect().remove();
 
-// Always works on player2 whether is player 1 of player 2. not good.
-// Tried switching players, never caught first if statement, always goes else
-// Probably stupid, but pretty sure that if statement is set up right, might use switch
-
-// Figured it out, thisPlayer is undefined at start, when this function runs, make it a function that runs after
-// thisPlayer is assigned?
-
-// Works Baby!!
 function checkDisconnect() {
     if (thisPlayer === "player1") {
         firebase.database().ref("/gameState").onDisconnect().update({
@@ -252,12 +293,6 @@ function checkDisconnect() {
         })
     };
 }
-
-
-$(".gameArea").on("click", function () {
-    console.log(thisPlayer + " " + typeof thisPlayer);
-})
-
 
 //   -------------------Game Play-------------------------------------
 
@@ -288,7 +323,6 @@ firebase.database().ref("/gamePlay").on("child_added", function (snapshot) {
     } else {
         play2Pick = pick;
         $(".playerBox2").css({ "background": "deepskyblue" });
-
     }
 
     if (gameArray.length >= 2) {
@@ -338,7 +372,7 @@ function reset() {
 function getScoreDatabase() {
     var scoreDatabase = firebase.database().ref("/Scores/" + displayName);
 
-    var checkScoreDatabase = scoreDatabase.once("value", function(snap){
+    var checkScoreDatabase = scoreDatabase.once("value", function (snap) {
         var test = snap.val();
 
         if (test !== null) {
@@ -347,7 +381,7 @@ function getScoreDatabase() {
                 p1Losses = test.losses;
             } else {
                 p2Wins = test.wins;
-                p2Losses = test.losses; 
+                p2Losses = test.losses;
             }
         } else {
             console.log("no previous score saved")
@@ -397,7 +431,7 @@ function showResult() {
     setTimeout(function () {
         $(".roller").slideUp()
         reset();
-    }, 2000);
+    }, 4000);
 }
 
 function updateScores() {
